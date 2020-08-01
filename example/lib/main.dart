@@ -200,8 +200,8 @@ class MainScreen extends StatelessWidget {
           (dragPosition, _) => dragPosition),
       builder: (context, snapshot) {
         double position =
-            snapshot.data ?? state.currentPosition.inMilliseconds.toDouble();
-        double duration = mediaItem?.duration?.inMilliseconds?.toDouble();
+            snapshot.data ?? state.currentPosition.toDouble();
+        double duration = mediaItem?.duration?.toDouble();
         return Column(
           children: [
             if (duration != null)
@@ -213,7 +213,7 @@ class MainScreen extends StatelessWidget {
                   _dragPositionSubject.add(value);
                 },
                 onChangeEnd: (value) {
-                  AudioService.seekTo(Duration(milliseconds: value.toInt()));
+                  AudioService.seekTo(value.toInt());
                   // Due to a delay in platform channel communication, there is
                   // a brief moment after releasing the Slider thumb before the
                   // new position is broadcast from the platform side. This
@@ -252,7 +252,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       album: "Science Friday",
       title: "A Salute To Head-Scratching Science",
       artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 5739820),
+      duration: 5739820,
       artUri:
           "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
     ),
@@ -261,7 +261,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       album: "Science Friday",
       title: "From Cat Rheology To Operatic Incompetence",
       artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 2856950),
+      duration: 2856950,
       artUri:
           "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
     ),
@@ -385,8 +385,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   @override
-  void onSeekTo(Duration position) {
-    _audioPlayer.seek(position);
+  void onSeekTo(duration) {
+    _audioPlayer.seek(Duration(milliseconds: duration ));
   }
 
   @override
@@ -407,7 +407,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<void> _seekRelative(Duration offset) async {
     var newPosition = _audioPlayer.playbackEvent.position + offset;
     if (newPosition < Duration.zero) newPosition = Duration.zero;
-    if (newPosition > mediaItem.duration) newPosition = mediaItem.duration;
+    //if (newPosition > mediaItem.duration) newPosition = mediaItem.duration;
     await _audioPlayer.seek(newPosition);
   }
 
@@ -473,8 +473,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
       processingState:
           processingState ?? AudioServiceBackground.state.processingState,
       playing: _playing,
-      position: position,
-      bufferedPosition: bufferedPosition ?? position,
+      position: position.inMilliseconds,
+      bufferedPosition: (bufferedPosition ?? position).inMilliseconds,
       speed: _audioPlayer.speed,
     );
   }
