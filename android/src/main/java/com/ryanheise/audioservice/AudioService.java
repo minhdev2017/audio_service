@@ -225,7 +225,7 @@ public class AudioService extends MediaBrowserServiceCompat implements AudioMana
 		} else if (wasPlaying && !playing) {
 			exitPlayingState();
 		}
-		if(!wasPlaying)
+		if(wasPlaying != playing)
 			updateNotification();
 	}
 
